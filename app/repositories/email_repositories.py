@@ -73,9 +73,31 @@ class EmailRepository:
         )
         
         # Add to database
-        db.add(email_log)
-        db.commit()
-        db.refresh(email_log)
+        # db.add(email_log)
+        # db.commit()
+        # db.refresh(email_log)
+        async with db.cursor() as cursor:
+            await cursor.execute(
+                """
+                INSERT INTO email_logs (
+                    sender_email, sender_name, recipients, cc, bcc,
+                    subject, message_id, status, is_success, error_message,app_id
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
+                """,
+                (
+                    email_request.sender,
+                    email_request.sender_name,
+                    recipients_json,
+                    cc_json,
+                    bcc_json,
+                    email_request.content.subject,
+                    1,
+                    status,
+                    is_success,
+                    error_message, '1ydrydryg' 
+                )
+            )
+            await db.commit()
         
         return email_log
     
