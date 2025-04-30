@@ -21,6 +21,7 @@ class EmailRequest(BaseModel):
     bcc: Optional[List[EmailRecipient]] = None
     content: EmailContent
     reply_to: Optional[List[EmailStr]] = None
+    app_id: int
 
 class EmailResponse(BaseModel):
     """Model for email response with message ID and status"""

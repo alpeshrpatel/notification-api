@@ -26,6 +26,7 @@ class SESService:
             email_log = await EmailRepository.create_email_log(
                 db=db, 
                 email_request=email_request,
+                message_id=0,
                 status="Sending"
             )
             
@@ -99,6 +100,7 @@ class SESService:
                 await EmailRepository.create_email_log(
                     db=db,
                     email_request=email_request,
+                    message_id=0,
                     status="Failed",
                     is_success=False,
                     error_message=error_message

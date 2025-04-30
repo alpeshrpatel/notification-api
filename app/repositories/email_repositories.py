@@ -91,10 +91,10 @@ class EmailRepository:
                     cc_json,
                     bcc_json,
                     email_request.content.subject,
-                    1,
+                    message_id,
                     status,
                     is_success,
-                    error_message, '1ydrydryg' 
+                    error_message, email_request.app_id 
                 )
             )
             await db.commit()
