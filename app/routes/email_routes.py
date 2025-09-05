@@ -12,7 +12,7 @@ from sqlalchemy import select
 from app.database.database import get_db
 from app.models.db_applications import Application  # Import Application model
 from app.repositories.email_repositories import EmailRepository  # Import EmailRepository
-import pywhatkit
+# import pywhatkit
 import os
 
 # Create router
@@ -134,7 +134,7 @@ async def send_whatsapp_message(
     image_path = os.path.join(base_dir, "..", "images", "gotestli.png")
 
     # Implement the logic to send WhatsApp message using Twilio API
-    pywhatkit.sendwhatmsg("+14804923225", "Hi, This Is system generated message From Dipak", 8,44)
+    # pywhatkit.sendwhatmsg("+14804923225", "Hi, This Is system generated message From Dipak", 8,44)
     # pywhatkit.sendwhats_image("+917567448419", image_path, "Team gotestli")
     print("Successfully Sent!")
     
