@@ -37,6 +37,8 @@
 
 import json
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from datetime import datetime, timedelta
 from app.models.db_emaillog import EmailLog
 from app.models.email_models import EmailRequest
 
@@ -110,3 +112,64 @@ class EmailRepository:
     def get_email_log_by_id(db: Session, email_log_id: int):
         """Get a specific email log by ID"""
         return db.query(EmailLog).filter(EmailLog.id == email_log_id).first()
+    
+    @staticmethod
+    async def update_status(db: Session, message_id: str, status: str, is_success: bool):
+        log = db.query(EmailLog).filter(EmailLog.message_id == message_id).first()
+        if log:
+            log.status = status
+            log.is_success = is_success
+            db.commit()
+            db.refresh(log)
+        return log
+
+    @staticmethod
+    async def increment_open_count(db: Session, message_id: str):
+        log = db.query(EmailLog).filter(EmailLog.message_id == message_id).first()
+        if log:
+            log.opens = (log.opens or 0) + 1
+            db.commit()
+            db.refresh(log)
+        return log
+
+    @staticmethod
+    async def increment_click_count(db: Session, message_id: str):
+        log = db.query(EmailLog).filter(EmailLog.message_id == message_id).first()
+        if log:
+            log.clicks = (log.clicks or 0) + 1
+            db.commit()
+            db.refresh(log)
+        return log
+    
+    @staticmethod
+    def get_email_metrics(db: Session, months: int = 3):
+        start_date = datetime.utcnow() - timedelta(days=30 * months)
+
+        results = (
+            db.query(
+                func.date_trunc('day', EmailLog.sent_at).label('day'),
+                func.count().label('total'),
+                func.sum(func.case((EmailLog.is_success == True, 1), else_=0)).label('success'),
+                func.sum(func.case((EmailLog.status == "Bounced", 1), else_=0)).label('bounced'),
+                func.sum(func.case((EmailLog.status == "Complaint", 1), else_=0)).label('complaints'),
+                func.sum(EmailLog.opens).label('opens'),
+                func.sum(EmailLog.clicks).label('clicks'),
+            )
+            .filter(EmailLog.sent_at >= start_date)
+            .group_by(func.date_trunc('day', EmailLog.sent_at))
+            .order_by(func.date_trunc('day', EmailLog.sent_at))
+            .all()
+        )
+
+        return [
+            {
+                "date": row.day.strftime("%Y-%m-%d"),
+                "total": row.total,
+                "success": int(row.success or 0),
+                "bounced": int(row.bounced or 0),
+                "complaints": int(row.complaints or 0),
+                "opens": int(row.opens or 0),
+                "clicks": int(row.clicks or 0),
+            }
+            for row in results
+        ]

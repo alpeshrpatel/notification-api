@@ -11,6 +11,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.database.database import get_db
 from app.models.db_applications import Application  # Import Application model
+from app.repositories.email_repositories import EmailRepository  # Import EmailRepository
+import pywhatkit
+import os
 
 # Create router
 router = APIRouter(tags=["emails"])
@@ -110,3 +113,32 @@ async def send_email(email_request: EmailRequest, db: Session = Depends(get_db))
     - **reply_to**: Optional list of reply-to email addresses
     """
     return await EmailController.send_email(email_request,db)
+
+@router.post("/send/whatsapp",
+    summary="Send a WhatsApp message using Twilio API",
+    description="Send a WhatsApp message using Twilio API"
+)
+async def send_whatsapp_message(
+    # message: str,
+    # phone_number: str,
+    # x_api_token: Optional[str] = Header(None),
+    # app_id: Optional[str] = Header(None),
+    # db: Session = Depends(get_db)
+):
+    """
+    Send a WhatsApp message using Twilio API with the following information:
+    - **message**: Message to be sent
+    - **phone_number**: Phone number of the recipient
+    """
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    image_path = os.path.join(base_dir, "..", "images", "gotestli.png")
+
+    # Implement the logic to send WhatsApp message using Twilio API
+    pywhatkit.sendwhatmsg("+14804923225", "Hi, This Is system generated message From Dipak", 8,44)
+    # pywhatkit.sendwhats_image("+917567448419", image_path, "Team gotestli")
+    print("Successfully Sent!")
+    
+    
+@router.get("/email/metrics")
+def get_email_metrics(months: int = 3, db: Session = Depends(get_db)):
+    return {"metrics": EmailRepository.get_email_metrics(db, months=months)}

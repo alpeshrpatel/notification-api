@@ -34,3 +34,8 @@ class EmailLog(Base):
     sent_at = Column(DateTime, default=func.now(), nullable=False)
     error_message = Column(Text, nullable=True)
     is_success = Column(Boolean, default=True, nullable=False)
+    
+    opens = Column(Integer, default=0, nullable=False)       # Number of times email was opened
+    clicks = Column(Integer, default=0, nullable=False)      # Number of clicks
+    bounces = Column(Integer, default=0, nullable=False)     # Bounce count
+    complaints = Column(Integer, default=0, nullable=False)  # Complaint count
