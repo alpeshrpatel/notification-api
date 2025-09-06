@@ -37,7 +37,7 @@
 
 import json
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, case
 from datetime import datetime, timedelta
 from app.models.db_emaillog import EmailLog
 from app.models.email_models import EmailRequest
@@ -149,9 +149,9 @@ class EmailRepository:
             db.query(
                 func.date_trunc('day', EmailLog.sent_at).label('day'),
                 func.count().label('total'),
-                func.sum(func.case((EmailLog.is_success == True, 1), else_=0)).label('success'),
-                func.sum(func.case((EmailLog.status == "Bounced", 1), else_=0)).label('bounced'),
-                func.sum(func.case((EmailLog.status == "Complaint", 1), else_=0)).label('complaints'),
+                func.sum(case((EmailLog.is_success == True, 1), else_=0)).label('success'),
+                func.sum(case((EmailLog.status == "Bounced", 1), else_=0)).label('bounced'),
+                func.sum(case((EmailLog.status == "Complaint", 1), else_=0)).label('complaints'),
                 func.sum(EmailLog.opens).label('opens'),
                 func.sum(EmailLog.clicks).label('clicks'),
             )
