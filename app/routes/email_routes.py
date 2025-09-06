@@ -147,7 +147,6 @@ def get_email_metrics(months: int = 3, db: Session = Depends(get_db)):
 from fastapi import APIRouter, Request, Depends
 from sqlalchemy.orm import Session
 from app.repositories.email_repositories import EmailRepository
-from app.database import get_db
 
 import json
 
