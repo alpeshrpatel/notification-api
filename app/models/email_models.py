@@ -31,3 +31,55 @@ class EmailResponse(BaseModel):
 class ErrorResponse(BaseModel):
     """Model for error responses"""
     detail: str
+    
+class SESMail(BaseModel):
+    timestamp: str | None = None
+    messageId: str | None = None
+
+class SESBounce(BaseModel):
+    bounceType: str | None = None
+    bouncedRecipients: list[dict] | None = None
+    timestamp: str | None = None
+
+class SESComplaint(BaseModel):
+    complainedRecipients: list[dict] | None = None
+    timestamp: str | None = None
+
+class SESDelivery(BaseModel):
+    timestamp: str | None = None
+    processingTimeMillis: int | None = None
+    recipients: list[str] | None = None
+    smtpResponse: str | None = None
+
+class SESOpen(BaseModel):
+    timestamp: str | None = None
+    ipAddress: str | None = None
+    userAgent: str | None = None
+
+class SESClick(BaseModel):
+    timestamp: str | None = None
+    ipAddress: str | None = None
+    userAgent: str | None = None
+    link: str | None = None
+
+class SESMessage(BaseModel):
+    eventType: str | None = None
+    notificationType: str | None = None
+    mail: SESMail | None = None
+    bounce: SESBounce | None = None
+    complaint: SESComplaint | None = None
+    delivery: SESDelivery | None = None
+    open: SESOpen | None = None
+    click: SESClick | None = None
+
+# --- SNS wrapper ---
+class SNSPayload(BaseModel):
+    Type: str
+    MessageId: str
+    TopicArn: str | None = None
+    Message: SESMessage
+    Timestamp: str | None = None
+    SubscribeURL: str | None = None
+    UnsubscribeURL: str | None = None
+    
+    

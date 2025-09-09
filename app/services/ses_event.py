@@ -8,7 +8,7 @@ import json
 
 router = APIRouter()
 
-@router.post("/email/events")
+# @router.post("/email/events")
 async def ses_event_listener(request: Request, db: Session = Depends(get_db)):
     """
     Endpoint for AWS SES to send bounce/complaint/open/click events.
