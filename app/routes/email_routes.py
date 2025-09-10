@@ -366,6 +366,8 @@ async def ses_event_listener(payload: SNSPayload, db: Session = Depends(get_db))
     """
     try:
         logger.info(f"SNS message type: {payload.Type}")
+        logger.info("=== WEBHOOK CALLED ===")
+        logger.info(f"Request headers: {dict(payload)}")
 
         # Subscription confirmation
         if payload.Type == "SubscriptionConfirmation":
